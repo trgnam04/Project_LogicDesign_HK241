@@ -1,0 +1,7 @@
+../Core/Src/uart.c:23:6:Uart_StartReceive	16	static
+../Core/Src/uart.c:33:6:Uart_SendByte	24	static
+../Core/Src/uart.c:36:6:Uart_SendString	16	static
+../Core/Src/uart.c:44:19:Uart_TestESP	8	static
+../Core/Src/uart.c:69:6:Uart_ESPSendByte	16	static
+../Core/Src/uart.c:72:6:Uart_ESPSendString	16	static
+../Core/Src/uart.c:78:6:HAL_UART_RxCpltCallback	16	static

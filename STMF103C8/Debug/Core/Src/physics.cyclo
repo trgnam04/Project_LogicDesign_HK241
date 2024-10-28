@@ -1,0 +1,9 @@
+../Core/Src/physics.c:13:6:InitPhysics	1
+../Core/Src/physics.c:20:6:turnOffLED	1
+../Core/Src/physics.c:24:6:turnOnGreen	1
+../Core/Src/physics.c:28:6:turnOnBlue	1
+../Core/Src/physics.c:32:6:turnOnRed	1
+../Core/Src/physics.c:36:6:LCD_DisplayPage1	1
+../Core/Src/physics.c:44:6:LCD_DisplayPage2	1
+../Core/Src/physics.c:55:6:LCD_DisplayPage3	1
+../Core/Src/physics.c:66:6:LCD_DisplayConnectEsp	3

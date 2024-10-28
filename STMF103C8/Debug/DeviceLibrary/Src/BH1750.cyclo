@@ -1,0 +1,5 @@
+../DeviceLibrary/Src/BH1750.c:12:19:BH1750_Init	1
+../DeviceLibrary/Src/BH1750.c:22:19:BH1750_SendCommand	2
+../DeviceLibrary/Src/BH1750.c:30:19:BH1750_ReadData	2
+../DeviceLibrary/Src/BH1750.c:43:19:BH1750_TriggerReceiveData	4
+../DeviceLibrary/Src/BH1750.c:56:19:BH1750_ReceiveData	3
