@@ -4,6 +4,7 @@
 ../Core/Src/physics.c:28:6:turnOnBlue	1
 ../Core/Src/physics.c:32:6:turnOnRed	1
 ../Core/Src/physics.c:36:6:LCD_DisplayPage1	1
-../Core/Src/physics.c:44:6:LCD_DisplayPage2	1
-../Core/Src/physics.c:55:6:LCD_DisplayPage3	1
-../Core/Src/physics.c:66:6:LCD_DisplayConnectEsp	3
+../Core/Src/physics.c:43:6:LCD_DisplayPage2	1
+../Core/Src/physics.c:53:6:LCD_Clear	1
+../Core/Src/physics.c:57:6:LCD_DisplayPage3	1
+../Core/Src/physics.c:67:6:LCD_DisplayConnectEsp	3

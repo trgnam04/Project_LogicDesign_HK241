@@ -34,7 +34,6 @@ void turnOnRed(void){
 }
 
 void LCD_DisplayPage1(){
-	CLCD_I2C_Clear(&LCD_t);
 	CLCD_I2C_SetCursor(&LCD_t, 4, 0);
 	CLCD_I2C_WriteString(&LCD_t, "WEATHER");
 	CLCD_I2C_SetCursor(&LCD_t, 4, 1);
@@ -43,7 +42,6 @@ void LCD_DisplayPage1(){
 
 void LCD_DisplayPage2(float temp, float humid){
 	char buff[16];
-	CLCD_I2C_Clear(&LCD_t);
 	sprintf(buff, "Temp :%0.1f", temp);
 	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
 	CLCD_I2C_WriteString(&LCD_t, buff);
@@ -52,9 +50,12 @@ void LCD_DisplayPage2(float temp, float humid){
 	CLCD_I2C_WriteString(&LCD_t, buff);
 }
 
+void LCD_Clear(void){
+	CLCD_I2C_Clear(&LCD_t);
+}
+
 void LCD_DisplayPage3(float airpr, float lightins){
 	char buff[16];
-	CLCD_I2C_Clear(&LCD_t);
 	sprintf(buff, "Airpr   :%0.1f", airpr);
 	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
 	CLCD_I2C_WriteString(&LCD_t, buff);

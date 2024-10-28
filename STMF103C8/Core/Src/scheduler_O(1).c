@@ -7,7 +7,6 @@
 
 
 #include "scheduler_O(1).h"
-#include <stdlib.h>
 
 Container* container = NULL;
 
@@ -62,6 +61,7 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                         // update new head
                         container->tail->Delay = PERIOD;
                         container->tail->Period = PERIOD;
+                        container->tail->pTask = pFunction;
                         //update next to node DELAY
                         temp->Delay -= PERIOD;
                         // update tail
@@ -92,6 +92,7 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                     newNode = container->tail;
                     newNode->Delay = PERIOD - Total;
                     newNode->Period = PERIOD;
+                    newNode->pTask = pFunction;
                     // update new tail
                     while(prevTail->next != container->tail){
                         prevTail = prevTail->next;
@@ -126,6 +127,7 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                     // update DELAY
                     container->tail->Delay = PERIOD - Total;
                     container->tail->Period = PERIOD;
+                    container->tail->pTask = pFunction;
                     // update empty slot
                     container->emptySlot--;
                     return;

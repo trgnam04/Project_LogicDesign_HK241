@@ -1,5 +1,5 @@
-DeviceLibrary/Src/DHT20.o: ../DeviceLibrary/Src/DHT20.c \
- D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/DHT20.h ../Core/Inc/main.h \
+Core/Src/fsm_lcd.o: ../Core/Src/fsm_lcd.c ../Core/Inc/fsm_lcd.h \
+ ../Core/Inc/physics.h ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -25,8 +25,13 @@ DeviceLibrary/Src/DHT20.o: ../DeviceLibrary/Src/DHT20.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/DHT20.h:
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
+ ../Core/Inc/uart.h ../Core/Inc/usart.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h ../Core/Inc/main.h \
+ ../Core/Inc/button.h ../Core/Inc/gpio.h
+../Core/Inc/fsm_lcd.h:
+../Core/Inc/physics.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -54,3 +59,10 @@ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/DHT20.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
+../Core/Inc/uart.h:
+../Core/Inc/usart.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h:
+../Core/Inc/main.h:
+../Core/Inc/button.h:
+../Core/Inc/gpio.h:

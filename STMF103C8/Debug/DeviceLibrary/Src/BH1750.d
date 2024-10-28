@@ -1,5 +1,5 @@
 DeviceLibrary/Src/BH1750.o: ../DeviceLibrary/Src/BH1750.c \
- D:/STMF103C8/DeviceLibrary/Inc/BH1750.h ../Core/Inc/main.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BH1750.h ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -26,7 +26,7 @@ DeviceLibrary/Src/BH1750.o: ../DeviceLibrary/Src/BH1750.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-D:/STMF103C8/DeviceLibrary/Inc/BH1750.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BH1750.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:

@@ -30,10 +30,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/software_timer.h ../Core/Inc/scheduler_O(1).h \
  ../Core/Inc/software_timer.h ../Core/Inc/physics.h ../Core/Inc/uart.h \
  ../Core/Inc/usart.h ../Core/Inc/physics.h \
- D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
- D:/STMF103C8/DeviceLibrary/Inc/ledRGB.h \
- D:/STMF103C8/DeviceLibrary/Inc/BH1750.h \
- D:/STMF103C8/DeviceLibrary/Inc/BMP180.h
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h ../Core/Inc/button.h \
+ ../Core/Inc/gpio.h D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BH1750.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BMP180.h ../Core/Inc/fsm_lcd.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -74,7 +74,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/uart.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/physics.h:
-D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
-D:/STMF103C8/DeviceLibrary/Inc/ledRGB.h:
-D:/STMF103C8/DeviceLibrary/Inc/BH1750.h:
-D:/STMF103C8/DeviceLibrary/Inc/BMP180.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h:
+../Core/Inc/button.h:
+../Core/Inc/gpio.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BH1750.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/BMP180.h:
+../Core/Inc/fsm_lcd.h:

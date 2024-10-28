@@ -27,6 +27,7 @@ void turnOnRed(void);
 void LCD_DisplayPage1(void);
 void LCD_DisplayPage2(float temp, float humid);
 void LCD_DisplayPage3(float airpr, float lightins);
+void LCD_Clear(void);
 void LCD_DisplayConnectEsp(uint8_t state);
 
 

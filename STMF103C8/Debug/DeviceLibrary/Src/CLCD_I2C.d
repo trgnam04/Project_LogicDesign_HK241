@@ -1,5 +1,5 @@
 DeviceLibrary/Src/CLCD_I2C.o: ../DeviceLibrary/Src/CLCD_I2C.c \
- D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Inc/stm32f1xx_hal_conf.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
@@ -26,7 +26,7 @@ DeviceLibrary/Src/CLCD_I2C.o: ../DeviceLibrary/Src/CLCD_I2C.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h:

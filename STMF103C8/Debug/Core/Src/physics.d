@@ -26,8 +26,9 @@ Core/Src/physics.o: ../Core/Src/physics.c ../Core/Inc/physics.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
  ../Core/Inc/uart.h ../Core/Inc/usart.h ../Core/Inc/physics.h \
- D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
- D:/STMF103C8/DeviceLibrary/Inc/ledRGB.h ../Core/Inc/main.h
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h \
+ D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h ../Core/Inc/main.h \
+ ../Core/Inc/button.h ../Core/Inc/gpio.h
 ../Core/Inc/physics.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -59,6 +60,8 @@ Core/Src/physics.o: ../Core/Src/physics.c ../Core/Inc/physics.h \
 ../Core/Inc/uart.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/physics.h:
-D:/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
-D:/STMF103C8/DeviceLibrary/Inc/ledRGB.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/CLCD_I2C.h:
+D:/DA_TKLL/STMF103C8/DeviceLibrary/Inc/ledRGB.h:
 ../Core/Inc/main.h:
+../Core/Inc/button.h:
+../Core/Inc/gpio.h:

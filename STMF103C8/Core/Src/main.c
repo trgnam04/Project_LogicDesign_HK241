@@ -30,6 +30,7 @@
 #include "physics.h"
 #include "BH1750.h"
 #include "BMP180.h"
+#include "fsm_lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +51,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-CLCD_I2C_Name LCD1;
 BMP180_Typedef BMP180_Sensor;
 BH1750_Typedef BH1750_Sensor;
 
@@ -102,25 +102,24 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim2);
   InitPhysics(&hi2c1, &htim1);
+
   init_ledRGB(&htim1);
   BMP180_Init(&hi2c1, &BMP180_Sensor);
   BH1750_Init(&hi2c1, &BH1750_Sensor);
 
-  LCD_DisplayPage1();
-  HAL_Delay(1000);
-  LCD_DisplayConnectEsp(0);
-  HAL_Delay(1000);
-  LCD_DisplayConnectEsp(1);
 
-  turnOnBlue();
-  HAL_Delay(1000);
+
   turnOnGreen();
-  HAL_Delay(1000);
-  turnOnRed();
   HAL_Delay(1000);
   turnOffLED();
 
-  BMP180_Get_Calibration_Values(&BMP180_Sensor);
+  SCH_Init();
+  SCH_Add_Task(button_reading, 1, 0);
+  SCH_Add_Task(fsm_lcd, 1, 1);
+
+//  BMP180_Get_Calibration_Values(&BMP180_Sensor);
+
+
 
 
   /* USER CODE END 2 */
@@ -132,9 +131,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+//	  BMP180_Get_Presure(&BMP180_Sensor);
+//	  BH1750_ReceiveData(&BH1750_Sensor);
+//	  LCD_DisplayPage3(BMP180_Sensor.PressureATM, BH1750_Sensor.Value);
+//	  HAL_Delay(1000);
+	  SCH_Dispatch_Task();
+
 
   /* USER CODE END 3 */
-  }
 }
 
 /**
