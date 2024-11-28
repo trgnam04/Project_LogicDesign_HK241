@@ -6,69 +6,292 @@
  */
 #include "fsm_lcd.h"
 
-typedef enum {
-	LCD_INIT,
-	DISPLAY_PAGE1,
-	DISPLAY_PAGE2,
-	DISPLAY_PAGE3
-} LCD_STATE;
+uint8_t unitDisplay_temperature = 0;
+uint8_t unitDisplay_pressure = 0;
+static unsigned char flagReceivedData = 0;
+static unsigned char tempState1 = 0;
+static unsigned char tempState2 = 0;
+static unsigned char tempState3 = 0;
+static WeatherStation_t mobj;
 
-LCD_STATE lcd_state = LCD_INIT;
-
-unsigned char temp = 0;
-
-
-void fsm_lcd(void){
-	switch(lcd_state){
-	case LCD_INIT:{
-
-		lcd_state = DISPLAY_PAGE1;
-		break;
-	}
-	case DISPLAY_PAGE1:{
-
-		LCD_DisplayPage1();
-
-		if(is_button_press(0)){
-			temp = 1;
-		}
-		if(!is_button_press(0) && temp){
-			LCD_Clear();
-			temp = 0;
-			lcd_state = DISPLAY_PAGE2;
-		}
-		break;
-	}
-	case DISPLAY_PAGE2:{
-		LCD_DisplayPage2(0, 0);
-
-		if(is_button_press(0)){
-			temp = 1;
-		}
-		if(!is_button_press(0) && temp){
-			LCD_Clear();
-			temp = 0;
-			lcd_state = DISPLAY_PAGE3;
-		}
-		break;
-	}
-	case DISPLAY_PAGE3:{
-		LCD_DisplayPage3(0, 0);
-
-
-		if(is_button_press(0)){
-			temp = 1;
-		}
-		if(!is_button_press(0) && temp){
-			LCD_Clear();
-			temp = 0;
-			lcd_state = DISPLAY_PAGE1;
-		}
-		break;
-	}
-	default:{
-		break;
-	}
-	}
+void init_System(void){
+	InitPhysics();
+	mobj.activate_state = IDLE;
+	mobj.activate_substate.settingState = INIT;
+	mobj.activate_substate.uartState = INIT_UART;
+	mobj.activate_substate.unitState = INIT_UNIT;
 
 }
+
+void fsm_readSensor(void){
+	flagReceivedData = 1;
+	// read pressure data
+	ReadPressure();
+
+	// read light intensity data
+//	SendRequestForLTdata();
+//	SCH_Add_Task(ReadLightIntensity, 0, 18);
+
+}
+
+void settingUart_handler(void){
+	switch(mobj.activate_substate.uartState){
+	case INIT_UART:{
+		mobj.activate_substate.uartState = ACTIVATE_ENTRY;
+		break;
+	}
+	case ACTIVATE_ENTRY:{
+		LCD_Clear();
+		LCD_displaySettingUart(0);
+		mobj.activate_substate.uartState = ACTIVATE;
+		break;
+	}
+	case ACTIVATE:{
+		flagUpdateData = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			mobj.activate_substate.uartState = INACTIVATE_ENTRY;
+		}
+		break;
+	}
+	case INACTIVATE_ENTRY:{
+		LCD_Clear();
+		LCD_displaySettingUart(1);
+		mobj.activate_substate.uartState = INACTIVATE;
+		break;
+	}
+	case INACTIVATE:{
+		flagUpdateData = 0;
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			mobj.activate_substate.uartState = ACTIVATE_ENTRY;
+		}
+		break;
+	}
+	}
+}
+
+void settingUnit_handler(void){
+	switch(mobj.activate_substate.unitState){
+	case INIT_UNIT:{
+		SetCursor(0, 0);
+		LCD_putChar('>');
+		LCD_displaySettingTemp(unitDisplay_temperature);
+		mobj.activate_substate.unitState = SETTING_TEMP;
+		break;
+	}
+	case SETTING_TEMP:{
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			unitDisplay_temperature = (unitDisplay_temperature + 1) % 2;
+			LCD_displaySettingTemp(unitDisplay_temperature);
+			break;
+		}
+
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			SetCursor(0, 0);
+			LCD_putChar(' ');
+			SetCursor(0, 1);
+			LCD_putChar('>');
+			LCD_displaySettingPress(unitDisplay_pressure);
+			mobj.activate_substate.unitState = SETTING_PRESS;
+		}
+		break;
+	}
+	case SETTING_PRESS:{
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			unitDisplay_pressure = (unitDisplay_pressure + 1) % 2;
+			LCD_displaySettingPress(unitDisplay_pressure);
+			break;
+		}
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			SetCursor(0, 1);
+			LCD_putChar(' ');
+			mobj.activate_substate.unitState = INIT_UNIT;
+		}
+		break;
+	}
+	}
+}
+
+void settingMode_handler(void){
+	switch(mobj.activate_substate.settingState){
+	case INIT:{
+		LCD_displaySettingMode();
+		SetCursor(9, 0);
+		LCD_putChar('>');
+		SetCursor(9, 1);
+		LCD_putChar(' ');
+		mobj.activate_substate.settingState = SETTING_UART;
+		break;
+	}
+	case SETTING_UART:{
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			if(mobj.activate_substate.uartState == ACTIVATE){
+				mobj.activate_substate.uartState = ACTIVATE_ENTRY;
+			}
+			else{
+				mobj.activate_substate.uartState = INACTIVATE_ENTRY;
+			}
+			mobj.activate_substate.settingState = UART_PROCESS;
+			break;
+		}
+
+
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			SetCursor(9, 1);
+			LCD_putChar('>');
+			SetCursor(9, 0);
+			LCD_putChar(' ');
+			mobj.activate_substate.settingState = SETTING_UNIT;
+		}
+		break;
+	}
+	case UART_PROCESS:{
+		settingUart_handler();
+		if(is_button_press1s(0)){
+			mobj.activate_substate.settingState = INIT;
+		}
+		break;
+	}
+	case SETTING_UNIT:{
+		if(is_button_press(1)){
+			tempState2 = 1;
+		}
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
+			mobj.activate_substate.settingState = INIT;
+			break;
+		}
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			LCD_Clear();
+			LCD_displaySettingUnit();
+			mobj.activate_substate.unitState = INIT_UNIT;
+			mobj.activate_substate.settingState = UNIT_PROCESS;
+		}
+		break;
+	}
+	case UNIT_PROCESS:{
+		settingUnit_handler();
+
+		if(is_button_press1s(0)){
+			LCD_Clear();
+			mobj.activate_substate.settingState = INIT;
+		}
+		break;
+	}
+	}
+}
+
+void WeatherStation(void){
+//	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
+	switch(mobj.activate_state){
+	case IDLE:{
+		LCD_DisplayPage1();
+		mobj.activate_state = HOME;
+		break;
+	}
+	case HOME:{
+		if(is_button_press1s(0)){
+			LCD_Clear();
+			mobj.activate_state = SETTING;
+			mobj.activate_substate.settingState = INIT;
+			mobj.activate_substate.unitState = INIT_UNIT;
+			break;
+		}
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			LCD_Clear();
+			LCD_DisplayPage2(unitDisplay_temperature);
+			mobj.activate_state = PAGE1;
+		}
+		break;
+	}
+	case PAGE1:{
+		if(flagReceivedData){
+			LCD_DisplayPage2(unitDisplay_temperature);
+			flagReceivedData = 0;
+		}
+
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			LCD_Clear();
+			LCD_DisplayPage3(unitDisplay_pressure);
+			mobj.activate_state = PAGE2;
+		}
+		break;
+	}
+	case PAGE2:{
+
+		if(flagReceivedData){
+			LCD_DisplayPage3(unitDisplay_pressure);
+			flagReceivedData = 0;
+		}
+
+		if(is_button_press(2)){
+			tempState3 = 1;
+		}
+		if(tempState3 && !is_button_press(2)){
+			tempState3 = 0;
+			LCD_Clear();
+			mobj.activate_state = IDLE;
+		}
+		break;
+	}
+	case SETTING:{
+		settingMode_handler();
+
+		if(is_button_press1s(1)){
+			LCD_Clear();
+			mobj.activate_substate.settingState = INIT;
+			mobj.activate_state = IDLE;
+		}
+		break;
+	}
+	}
+}
+

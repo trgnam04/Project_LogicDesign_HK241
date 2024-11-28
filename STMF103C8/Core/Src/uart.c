@@ -7,8 +7,6 @@
 
 #include "uart.h"
 
-#define BUFFER_SIZE 30
-
 uint8_t receive_buffer1;
 uint8_t receive_buffer2;
 unsigned char buffer1_flag = 0;
@@ -76,6 +74,7 @@ void Uart_ESPSendString(uint8_t* str){
 // call back
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart){
+	ESP_Callback(huart);
 	if(huart->Instance == USART1){
 		buffer1_flag = 1;
 		buffer1[index_buffer1++] = receive_buffer1;

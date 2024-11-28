@@ -40,7 +40,6 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
         S_Task* prevTail = container->tail->next;
         S_Task* temp = container->tail->next;
         int Total = 0;
-
         for(int i = 0; i < container->numTask; i++){
             Total += temp->Delay;
             if((Total + temp->next->Delay > DELAY) && temp != container->tail){
@@ -59,11 +58,11 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                     }
                     else{
                         // update new head
-                        container->tail->Delay = PERIOD;
+                        container->tail->Delay = DELAY;
                         container->tail->Period = PERIOD;
                         container->tail->pTask = pFunction;
                         //update next to node DELAY
-                        temp->Delay -= PERIOD;
+                        temp->Delay -= DELAY;
                         // update tail
                         while(prevTail->next != container->tail){
                             prevTail = prevTail->next;
@@ -90,7 +89,7 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                 else{
                     // update newNode DELAY
                     newNode = container->tail;
-                    newNode->Delay = PERIOD - Total;
+                    newNode->Delay = DELAY - Total;
                     newNode->Period = PERIOD;
                     newNode->pTask = pFunction;
                     // update new tail
@@ -111,8 +110,18 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
             }
 
             // add tail
+            if(temp->pTask == NULL){
+                temp->Delay = DELAY - Total;
+                temp->Period = PERIOD;
+                temp->pTask = pFunction;
+                // update empty slot
+                container->emptySlot--;
+                return;
+            }
             if(temp == container->tail){
                 if(container->emptySlot == 0){
+                    // printf("%d\n", DELAY);
+                    // printf("%d\n", Total);
                     // update DELAY
                     newNode = addNode(pFunction, DELAY - Total, PERIOD);
                     // update position
@@ -123,9 +132,8 @@ void SCH_Add_Task(void(*pFunction)(), int PERIOD, int DELAY){
                     container->numTask++;
                     return;
                 }
-                else{
-                    // update DELAY
-                    container->tail->Delay = PERIOD - Total;
+                else{ // error here
+                    container->tail->Delay = DELAY - Total;
                     container->tail->Period = PERIOD;
                     container->tail->pTask = pFunction;
                     // update empty slot
@@ -164,5 +172,17 @@ void SCH_Dispatch_Task(void){
 			SCH_Add_Task(temp.pTask, temp.Period, temp.Period);
 		}
 	}
+
+//	SCH_Go_To_Sleep();
 }
+
+void SCH_Go_To_Sleep(void){
+	HAL_SuspendTick();
+
+	HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+
+	HAL_ResumeTick();
+}
+
+
 

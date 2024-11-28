@@ -31,10 +31,8 @@ static void CLCD_WriteI2C(CLCD_I2C_Name* LCD, uint8_t Data, uint8_t Mode)
 		Data_L &= ~LCD_RS;
 	}
 	Data_I2C[0] = Data_H|LCD_EN;
-	CLCD_Delay(1);
 	Data_I2C[1] = Data_H;
 	Data_I2C[2] = Data_L|LCD_EN;
-	CLCD_Delay(1);
 	Data_I2C[3] = Data_L;
 	HAL_I2C_Master_Transmit(LCD->I2C, LCD->ADDRESS, (uint8_t *)Data_I2C, sizeof(Data_I2C), 1000);
 }
@@ -112,7 +110,6 @@ void CLCD_I2C_WriteString(CLCD_I2C_Name* LCD, char *String)
 void CLCD_I2C_Clear(CLCD_I2C_Name* LCD)
 {
 	CLCD_WriteI2C(LCD, LCD_CLEARDISPLAY, CLCD_COMMAND);
-	CLCD_Delay(5);
 }
 void CLCD_I2C_ReturnHome(CLCD_I2C_Name* LCD)
 {

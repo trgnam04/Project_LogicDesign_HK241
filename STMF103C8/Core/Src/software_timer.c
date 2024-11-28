@@ -8,63 +8,40 @@
 #include "software_timer.h"
 
 
-unsigned char timer1_flag = 0;
-unsigned char timer2_flag = 0;
-unsigned char timer3_flag = 0;
+#define MAX_TIMER 5
 
-static int timer1_counter = 0;
-static int timer2_counter = 0;
-static int timer3_counter = 0;
+int timerArr[MAX_TIMER];
+unsigned char timerFlag[MAX_TIMER];
 
-static int timer1_mul = 0;
-static int timer2_mul = 0;
-static int timer3_mul = 0;
 
-void setTimer1(int duration){
-	timer1_mul = duration / TIMER_CYCLE_1;
-	timer1_counter = timer1_mul;
-	timer1_flag = 0;
+void timerInit(void){
+	for(uint8_t i = 0; i < MAX_TIMER; i++){
+		timerArr[i] = 0;
+		timerFlag[i] = 0;
+	}
 }
 
-void setTimer2(int duration){
-	timer2_mul = duration / TIMER_CYCLE_2;
-	timer2_counter = timer2_mul;
-	timer2_flag = 0;
+void setTimer(int idx, int DURATION){
+	for(uint8_t i = 0; i < MAX_TIMER; i++){
+		if(i == idx){
+			timerArr[i] = DURATION;
+			timerFlag[i] = 0;
+		}
+	}
 }
 
-void setTimer3(int duration){
-	timer3_mul = duration / TIMER_CYCLE_3;
-	timer3_counter = timer3_mul;
-	timer3_flag = 0;
+void timerRun(void){
+	for(uint8_t i = 0; i < MAX_TIMER; i++){
+		if(timerArr[i] > 0){
+			timerArr[i]--;
+		}
+		if(timerArr[i] == 0){
+			timerFlag[i] = 1;
+		}
+	}
 }
 
 
-void timer1Run(void){
-	 if(timer1_counter > 0){
-		 timer1_counter--;
-		 if(timer1_counter <= 0){
-			timer1_flag = 1;
-		 }
-	 }
-}
-
-void timer2Run(void){
-	 if(timer2_counter > 0){
-		 timer2_counter--;
-		 if(timer2_counter <= 0){
-			timer2_flag = 1;
-		 }
-	 }
-}
-
-void timer3Run(void){
-	 if(timer3_counter > 0){
-		 timer3_counter--;
-		 if(timer3_counter <= 0){
-			timer3_flag = 1;
-		 }
-	 }
-}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance == TIM2){

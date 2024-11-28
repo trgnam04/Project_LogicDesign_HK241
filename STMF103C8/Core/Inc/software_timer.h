@@ -11,23 +11,9 @@
 #include "main.h"
 #include "scheduler_O(1).h"
 
-#define TIMER_CYCLE_1 1
-#define TIMER_CYCLE_2 1
-#define TIMER_CYCLE_3 1
-
-
-extern unsigned char timer1_flag;
-extern unsigned char timer2_flag;
-extern unsigned char timer3_flag;
-
-extern void timerInit(void);
-extern void setTimer1(int duration);
-extern void setTimer2(int duration);
-extern void setTimer3(int duration);
-void timer1Run(void);
-void timer2Run(void);
-void timer3Run(void);
-
+void timerInit(void);
+void setTimer(int idx, int DURATION);
+void timerRun(void);
 
 
 

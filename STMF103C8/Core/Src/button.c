@@ -6,8 +6,9 @@
  */
 
 #include "button.h"
+#include "gpio.h"
 
-#define NO_OF_BUTTON 1
+#define NO_OF_BUTTON 3
 
 #define BUTTON_IS_PRESSED  0
 #define BUTTON_IS_RELEASED 1
@@ -20,12 +21,20 @@ static GPIO_PinState debounceButton3[NO_OF_BUTTON];
 static uint8_t flagforButtonPressed1s[NO_OF_BUTTON];
 static uint8_t counterforButtonPressed1s[NO_OF_BUTTON];
 
+void init_button(void){
+	for(int i = 0; i < NO_OF_BUTTON; i++){
+		debounceButton1[i] = GPIO_PIN_SET;
+		debounceButton2[i] = GPIO_PIN_SET;
+		debounceButton3[i] = GPIO_PIN_SET;
+	}
+}
 
 void button_reading(void){
+	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
 	for(int i = 0; i < NO_OF_BUTTON; i++){
 		debounceButton3[i] = debounceButton2[i];
 		debounceButton2[i] = debounceButton1[i];
-		debounceButton1[i] = HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin);
+		updateButtonState(i);
 
 		if(debounceButton3[i] == debounceButton1[i]){
 			buttonBuffer[i] = debounceButton1[i];
@@ -48,15 +57,15 @@ void button_reading(void){
 void updateButtonState(uint8_t idx){
 	switch(idx){
 	case 0:{
-//		debounceButton3[idx] = HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin);
+		debounceButton1[idx] = HAL_GPIO_ReadPin(BTN0_GPIO_Port, BTN0_Pin);
 		break;
 	}
 	case 1:{
-//		debounceButton3[idx] = HAL_GPIO_ReadPin(BUTTON1_GPIO_Port, BUTTON1_Pin);
+		debounceButton1[idx] = HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin);
 		break;
 	}
 	case 2:{
-//		debounceButton3[idx] = HAL_GPIO_ReadPin(BUTTON2_GPIO_Port, BUTTON2_Pin);
+		debounceButton1[idx] = HAL_GPIO_ReadPin(BTN2_GPIO_Port, BTN2_Pin);
 		break;
 	}
 	default:{

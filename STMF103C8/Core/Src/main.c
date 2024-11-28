@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -28,9 +29,8 @@
 #include "scheduler_O(1).h"
 #include "software_timer.h"
 #include "physics.h"
-#include "BH1750.h"
-#include "BMP180.h"
 #include "fsm_lcd.h"
+#include "fsm_sensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,9 +51,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-BMP180_Typedef BMP180_Sensor;
-BH1750_Typedef BH1750_Sensor;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,6 +60,14 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void task1(){
+	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
+}
+
+
+void task2(){
+	HAL_GPIO_TogglePin(task2_GPIO_Port, task2_Pin);
+}
 
 /* USER CODE END 0 */
 
@@ -94,32 +99,26 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   MX_I2C1_Init();
   MX_TIM1_Init();
+  MX_USART3_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
-  HAL_TIM_Base_Start_IT(&htim2);
-  InitPhysics(&hi2c1, &htim1);
-
-  init_ledRGB(&htim1);
-  BMP180_Init(&hi2c1, &BMP180_Sensor);
-  BH1750_Init(&hi2c1, &BH1750_Sensor);
-
-
-
-  turnOnGreen();
-  HAL_Delay(1000);
-  turnOffLED();
-
+  init_System();
+  InitESP();
+  Connect_AdafruitServer();
   SCH_Init();
   SCH_Add_Task(button_reading, 1, 0);
-  SCH_Add_Task(fsm_lcd, 1, 1);
-
-//  BMP180_Get_Calibration_Values(&BMP180_Sensor);
-
-
+  SCH_Add_Task(task1, 1, 0);
+  SCH_Add_Task(task2, 1, 0);
+//  SCH_Add_Task(WeatherStation, 1, 0);
+//  SCH_Add_Task(fsm_readSensor, 100, 0);
+//  SCH_Add_Task(Uart_SendData, 300, 0);
+  SCH_Add_Task(Publish_Task, 500, 10);
+  HAL_TIM_Base_Start_IT(&htim2);
 
 
   /* USER CODE END 2 */
@@ -131,14 +130,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  BMP180_Get_Presure(&BMP180_Sensor);
-//	  BH1750_ReceiveData(&BH1750_Sensor);
-//	  LCD_DisplayPage3(BMP180_Sensor.PressureATM, BH1750_Sensor.Value);
-//	  HAL_Delay(1000);
 	  SCH_Dispatch_Task();
 
 
   /* USER CODE END 3 */
+  }
 }
 
 /**
@@ -213,3 +209,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+

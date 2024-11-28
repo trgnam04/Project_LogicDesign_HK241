@@ -33,6 +33,10 @@ HAL_StatusTypeDef BMP180_Init(I2C_HandleTypeDef* I2C_Name, BMP180_Typedef* BMP18
 	BMP180_Name->Temperature = 0;
 	BMP180_Name->I2C_Name = I2C_Name;
 
+	if(HAL_I2C_IsDeviceReady(I2C_Name, BMP180_DEVICE_WRITE_REGISTER_ADDRESS, 1, 100000) != HAL_OK){
+		return HAL_ERROR;
+	}
+
 	if(BMP180_Get_Calibration_Values(BMP180_Name) != HAL_OK){
 		return HAL_ERROR;
 	}
@@ -44,8 +48,7 @@ HAL_StatusTypeDef BMP180_Init(I2C_HandleTypeDef* I2C_Name, BMP180_Typedef* BMP18
 HAL_StatusTypeDef BMP180_Get_Calibration_Values(BMP180_Typedef* BMP180_Name){
 	uint8_t calibrationBuff[BMP180_CALIBRATION_VALUE_LENGTH] = {0};
 	uint8_t status = HAL_OK;
-	status = HAL_I2C_Mem_Read(BMP180_Name->I2C_Name, BMP180_DEVICE_READ_REGISTER_ADDRESS, BMP180_CALIBRATION_START_ADDRESS, 1, calibrationBuff, BMP180_CALIBRATION_VALUE_LENGTH, 10000);
-
+	status = HAL_I2C_Mem_Read(BMP180_Name->I2C_Name, BMP180_DEVICE_READ_REGISTER_ADDRESS, BMP180_CALIBRATION_START_ADDRESS, 1, calibrationBuff, BMP180_CALIBRATION_VALUE_LENGTH, 10000); // error here
 	/*shifting operations*/
 	AC1 = calibrationBuff[0]<<8 | calibrationBuff[1]; //8 bit MSB shifting left(15,14,13..), 8 bit LSB stay(7,6,5,..0)
 	AC2 = calibrationBuff[2]<<8 | calibrationBuff[3];
@@ -119,7 +122,7 @@ HAL_StatusTypeDef BMP180_Get_Uncompansated_Temperature(BMP180_Typedef* BMP180_Na
 	if(HAL_I2C_Mem_Write(BMP180_Name->I2C_Name, BMP180_DEVICE_WRITE_REGISTER_ADDRESS, 0xF4, 1, wData, 1, 100000) != HAL_OK){
 		return HAL_ERROR;
 	}
-	HAL_Delay(5);
+	HAL_Delay(8);
 	if(HAL_I2C_Mem_Read(BMP180_Name->I2C_Name, BMP180_DEVICE_READ_REGISTER_ADDRESS, 0xF6, 1, rData, 2, 100000) != HAL_OK){
 		return HAL_ERROR;
 	}
@@ -149,7 +152,7 @@ HAL_StatusTypeDef BMP180_Get_Temperature(BMP180_Typedef* BMP180_Name){
 HAL_StatusTypeDef BMP180_Get_Uncompansated_Presure(BMP180_Typedef* BMP180_Name){
 	uint8_t rData[3]={0};
 	uint8_t wData[1];
-	wData[0]=0x34 | (0x01<<6); //oversampling_setting is standard, it's mean 0x03 and shifting 6 bit to left
+	wData[0] = 0x34 | (0x01<<6); //oversampling_setting is standard, it's mean 0x03 and shifting 6 bit to left
 	if(HAL_I2C_Mem_Write(BMP180_Name->I2C_Name, BMP180_DEVICE_WRITE_REGISTER_ADDRESS, 0xF4, 1, wData, 1, 100000) != HAL_OK){
 		return HAL_ERROR;
 	}
@@ -161,7 +164,6 @@ HAL_StatusTypeDef BMP180_Get_Uncompansated_Presure(BMP180_Typedef* BMP180_Name){
 	unCompPresure = (rData[0]<<16 | rData [1]<<8 | rData[2]) >> (8 - (uint8_t)(0x03));
 	// shifting operation -> unCompPresure = (MSB<<16 + LSB<<8 + XLSB) >> (8-oversample_settings)
 	return HAL_OK;
-
 }
 
 HAL_StatusTypeDef BMP180_Get_Presure(BMP180_Typedef* BMP180_Name){
