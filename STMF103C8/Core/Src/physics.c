@@ -35,8 +35,8 @@ char AirPressureStr[10];
 const char* pSSID = "271104E";
 const char* PassWord = "1234567890";
 const char* UserID = "TrungNam";
-const char* Key = "aio_SYkH32u5VJE2tSuf8UDveyVNiOdh";
-const char* Server = "io.adafruit.com";
+//const char* Key = "aio_SYkH32u5VJE2tSuf8UDveyVNiOdh";
+//const char* Server = "io.adafruit.com";
 const uint16_t Port = 1883;
 
 static unsigned char flagConnect =  false;
