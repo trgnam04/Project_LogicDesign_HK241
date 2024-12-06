@@ -60,16 +60,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void task1(){
-	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
-}
-
-
-void task2(){
-	HAL_GPIO_TogglePin(task2_GPIO_Port, task2_Pin);
-	HAL_GPIO_TogglePin(Debug_Led_GPIO_Port, Debug_Led_Pin);
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -109,13 +99,6 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   init_System();
-//  while(1){
-//	  SendRequestDHT20();
-//	  HAL_Delay(100);
-//	  ReadDHT20();
-//	  LCD_DisplayPage2(0);
-//  }
-
   Connect_AdafruitServer();
   SCH_Init();
   SCH_Add_Task(button_reading, 1, 0);

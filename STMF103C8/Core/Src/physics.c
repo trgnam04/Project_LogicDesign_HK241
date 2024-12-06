@@ -32,18 +32,10 @@ const char* UserID = "TrungNam";
 const char* Key = "";
 const char* Server = "";
 const uint16_t Port = 1883;
-const uint16_t HTTP_Port = 443;
-
-
-char http_request[512];
 
 static unsigned char flagConnect =  false;
 static unsigned char flagConfig =  false;
 static unsigned char flagConnectWifi =  false;
-
-void create_json(char *buffer, const char *data){
-    sprintf(buffer, "{\"value\":\"%s\"}", data);
-}
 
 void InitPhysics(){
 	led_t.tim = &htim1;
