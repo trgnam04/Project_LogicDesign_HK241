@@ -56,16 +56,24 @@ void LCD_putChar(char character);
 void ReadPressure(void);
 void SendRequestForLTdata(void);
 void ReadLightIntensity(void);
+void SendRequestDHT20(void);
+void ReadDHT20(void);
 
 // UART
 void Uart_SendData(void);
 
 void Connect_AdafruitServer(void);
+void Reconncet_Server(void);
+void Reconnect_MQTTBroker(void);
 void Publish_Task(void);
-void Publish_Temperature_Task(void);
-void Publish_Humidity_Task(void);
-void Publish_LightIntensity_Task(void);
-void Publish_AirPressure_Task(void);
+unsigned char Publish_Temperature_Task(void);
+unsigned char Publish_Humidity_Task(void);
+unsigned char Publish_LightIntensity_Task(void);
+unsigned char Publish_AirPressure_Task(void);
 void Check_ServerConnect_Task(void);
+void ResetESP32(void);
+
+//JSON
+void create_json(char *buffer, const char *data);
 
 #endif /* INC_PHYSICS_H_ */

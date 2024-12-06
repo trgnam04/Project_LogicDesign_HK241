@@ -31,6 +31,8 @@ void DHT20_Init(I2C_HandleTypeDef* i2c, DHT20_Typedef* DHT_Name); // gán giá t
 unsigned char DHT20_CheckCRC8(DHT20_Typedef* DHT_Name ,unsigned char* pData, unsigned char length);
 uint8_t DHT20_ReadRegister(DHT20_Typedef* DHT_Name, uint8_t pRegister);
 Status_Trigger_DHT20 DHT20_ReceiveData(DHT20_Typedef* DHT_Name); // change humid data and temp data
+uint8_t DHT20_SendRequest(DHT20_Typedef* DHT_Name, uint8_t pRegister);
+uint8_t DHT20_ReadData(DHT20_Typedef* DHT_Name);
 
 
 

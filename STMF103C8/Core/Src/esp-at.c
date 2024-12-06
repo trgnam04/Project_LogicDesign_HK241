@@ -21,7 +21,7 @@ ESP_HandleTypeDef hEsp;
 #define UART_TIMEOUT 1000
 
 void InitESP(void){
-	ATC_Init(&hEsp.hAtc, &huart3);
+	ATC_Init(&hEsp.hAtc, &huart1);
 }
 
 
@@ -211,6 +211,24 @@ bool ESP_WifiMode(ESP_HandleTypeDef* hEsp, ESP_WifiModeTypeDef WifiMode, bool St
 	return answer;
 }
 
+bool	ESP_WifiStationIsConnect(ESP_HandleTypeDef* hEsp){
+	bool answer = false;
+	do{
+		if (!ATC_Send(&hEsp->hAtc, "AT+CWJAP?\r\n", 1000)) {
+			break;
+		}
+
+		if (!ATC_Receive(&hEsp->hAtc, esp_ok, 1000)) {
+			break;
+		}
+
+		answer = true;
+	}
+	while(0);
+
+
+	return answer;
+}
 
 // MQTT
 bool ESP_MQTTConfig(ESP_HandleTypeDef* hEsp, const char* Username, const char* Key){
@@ -250,8 +268,6 @@ bool ESP_MQTTConnect(ESP_HandleTypeDef* hEsp, const char* Server, uint16_t Port)
 		{
 		  break;
 		}
-
-
 		answer = true;
 
 	} while (0);
@@ -272,6 +288,7 @@ bool ESP_MQTTPublish(ESP_HandleTypeDef* hEsp, const char* Topic, const char* Mes
 		{
 		  break;
 		}
+		answer = true;
 	}
 	while(0);
 	return answer;
@@ -343,6 +360,14 @@ bool ESP_MQTTIsConnected(ESP_HandleTypeDef* hEsp){
 	return answer;
 
 }
+
+//bool	ESP_ReconnectServer(ESP_HandleTypeDef* hEsp){
+//
+//}
+//
+//bool	ESP_ReconnectMQTTBroker(ESP_HandleTypeDef* hEsp){
+//
+//}
 
 //void ATC_IdleLineCallback(ATC_Handletypedef* hAtc, uint16_t Len){ // put it in callback
 //	if (Len > hAtc->Size - hAtc->RxIdx)

@@ -9,7 +9,9 @@
 #include "fsm_sensor.h"
 
 void fsm_ReadData(void){
-	HAL_GPIO_TogglePin(task2_GPIO_Port, task2_Pin);
+	SendRequestDHT20();
+
+	SCH_Add_Task(ReadDHT20, 0, 10);
 
 	// read pressure data
 	ReadPressure();

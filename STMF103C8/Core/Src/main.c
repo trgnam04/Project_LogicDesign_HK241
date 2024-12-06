@@ -67,6 +67,7 @@ void task1(){
 
 void task2(){
 	HAL_GPIO_TogglePin(task2_GPIO_Port, task2_Pin);
+	HAL_GPIO_TogglePin(Debug_Led_GPIO_Port, Debug_Led_Pin);
 }
 
 /* USER CODE END 0 */
@@ -108,16 +109,21 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   init_System();
-  InitESP();
+//  while(1){
+//	  SendRequestDHT20();
+//	  HAL_Delay(100);
+//	  ReadDHT20();
+//	  LCD_DisplayPage2(0);
+//  }
+
   Connect_AdafruitServer();
   SCH_Init();
   SCH_Add_Task(button_reading, 1, 0);
-  SCH_Add_Task(task1, 1, 0);
-  SCH_Add_Task(task2, 1, 0);
-//  SCH_Add_Task(WeatherStation, 1, 0);
-//  SCH_Add_Task(fsm_readSensor, 100, 0);
-//  SCH_Add_Task(Uart_SendData, 300, 0);
-  SCH_Add_Task(Publish_Task, 500, 10);
+  SCH_Add_Task(WeatherStation, 1, 0);
+  SCH_Add_Task(fsm_readSensor, 100, 0);
+  SCH_Add_Task(Check_ServerConnect_Task, 500, 0);
+  SCH_Add_Task(Uart_SendData, 300, 0);
+  SCH_Add_Task(Publish_Task, 2000, 10);
   HAL_TIM_Base_Start_IT(&htim2);
 
 
@@ -136,7 +142,6 @@ int main(void)
   /* USER CODE END 3 */
   }
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -209,4 +214,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

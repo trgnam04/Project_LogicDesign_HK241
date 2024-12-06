@@ -50,6 +50,7 @@ bool	ESP_WifiDeInit(ESP_HandleTypeDef* hEsp);
 bool	ESP_WifiMode(ESP_HandleTypeDef* hEsp, ESP_WifiModeTypeDef WifiMode, bool StationAutoConnect);
 bool	ESP_WifiStationConnect(ESP_HandleTypeDef* hEsp, const char* pSSID, const char* pPass, const char* pMac, uint16_t Timeout);
 bool	ESP_WifiStationDisconnect(ESP_HandleTypeDef* hEsp);
+bool	ESP_WifiStationIsConnect(ESP_HandleTypeDef* hEsp);
 
 // MQTT
 bool	ESP_MQTTConfig(ESP_HandleTypeDef* hEsp, const char* Username, const char* Key);
@@ -59,6 +60,8 @@ bool	ESP_MQTTSubscribe(ESP_HandleTypeDef* hEsp, const char* Topic);
 bool	ESP_MQTTReceive(ESP_HandleTypeDef* hEsp, const char* Topic, char* Message);
 bool	ESP_MQTTDisconnect(ESP_HandleTypeDef* hEsp);
 bool	ESP_MQTTIsConnected(ESP_HandleTypeDef* hEsp);
+//bool	ESP_ReconnectServer(ESP_HandleTypeDef* hEsp);
+//bool	ESP_ReconnectMQTTBroker(ESP_HandleTypeDef* hEsp);
 
 void	ESP_Callback(UART_HandleTypeDef* huart);
 

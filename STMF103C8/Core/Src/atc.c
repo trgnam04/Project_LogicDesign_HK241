@@ -130,7 +130,7 @@ bool ATC_Receive(ATC_Handletypedef* hAtc, const char* expectedResponse, uint32_t
 //		   break;
 //	   }
 	}
-	HAL_UART_Transmit(&huart1, (uint8_t*)hAtc->pRxbuff, hAtc->RxIdx + 1, 1000);
+	HAL_UART_Transmit(&huart3, (uint8_t*)hAtc->pRxbuff, hAtc->RxIdx + 1, 1000);
 
 	return answer;
 }

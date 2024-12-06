@@ -7,13 +7,7 @@
 
 #include "physics.h"
 
-char msg1[128];
-char msg2[128];
-char msg3[128];
-char msg4[128];
-char msg5[128] = "------ Start Send Data ------\n";
-char msg6[128] = "-----------------------------\n";
-
+char msg[128];
 
 CLCD_I2C_Name LCD_t;
 LED_RGB led_t;
@@ -35,21 +29,41 @@ char AirPressureStr[10];
 const char* pSSID = "271104E";
 const char* PassWord = "1234567890";
 const char* UserID = "TrungNam";
-//const char* Key = "aio_SYkH32u5VJE2tSuf8UDveyVNiOdh";
-//const char* Server = "io.adafruit.com";
+const char* Key = "";
+const char* Server = "";
 const uint16_t Port = 1883;
+const uint16_t HTTP_Port = 443;
+
+
+char http_request[512];
 
 static unsigned char flagConnect =  false;
+static unsigned char flagConfig =  false;
+static unsigned char flagConnectWifi =  false;
+
+void create_json(char *buffer, const char *data){
+    sprintf(buffer, "{\"value\":\"%s\"}", data);
+}
 
 void InitPhysics(){
 	led_t.tim = &htim1;
 	CLCD_I2C_Init(&LCD_t, &hi2c1, 0x4e, 20, 4);
+	InitESP();
 	init_ledRGB(&htim1);
 	init_button();
 	BMP180_Init(&hi2c1, &BMP180_t);
 	BH1750_Init(&hi2c1, &BH1750_t);
 	DHT20_Init(&hi2c1, &DHT20_t);
 }
+
+void SendRequestDHT20(void){
+	DHT20_SendRequest(&DHT20_t, 0x71);
+}
+
+void ReadDHT20(void){
+	DHT20_ReadData(&DHT20_t);
+}
+
 
 void turnOffLED(void){
 	set_codeRGB(led_t.tim, 0x000000);
@@ -75,6 +89,11 @@ void LCD_DisplaySetting(void){
 }
 
 void LCD_DisplayPage1(){
+	if(flagConnectWifi){
+		CLCD_I2C_SetCursor(&LCD_t, 0, 0);
+		CLCD_I2C_WriteChar(&LCD_t, 'v');
+	}
+	HAL_Delay(1);
 	CLCD_I2C_SetCursor(&LCD_t, 4, 0);
 	CLCD_I2C_WriteString(&LCD_t, "WEATHER");
 	CLCD_I2C_SetCursor(&LCD_t, 4, 1);
@@ -86,7 +105,6 @@ void LCD_DisplayPage2(char idx){
 	HAL_Delay(1);
 	char buff[16];
 	float tempF = (DHT20_t.Temperature * 1.8) + 32;
-
 
 	if(idx){
 		sprintf(buff, "Temp :%0.1fF", tempF);
@@ -129,14 +147,14 @@ void LCD_DisplayConnectEsp(uint8_t state){
 		case 0:
 			CLCD_I2C_Clear(&LCD_t);
 			CLCD_I2C_SetCursor(&LCD_t, 0, 0);
-			CLCD_I2C_WriteString(&LCD_t, "Esp");
+			CLCD_I2C_WriteString(&LCD_t, " Esp");
 			CLCD_I2C_SetCursor(&LCD_t, 0, 1);
 			CLCD_I2C_WriteString(&LCD_t, "Connecting...");
 			break;
 		case 1:
 			CLCD_I2C_Clear(&LCD_t);
 			CLCD_I2C_SetCursor(&LCD_t, 0, 0);
-			CLCD_I2C_WriteString(&LCD_t, "Esp");
+			CLCD_I2C_WriteString(&LCD_t, " Esp");
 			CLCD_I2C_SetCursor(&LCD_t, 0, 1);
 			CLCD_I2C_WriteString(&LCD_t, "Connected");
 
@@ -158,11 +176,11 @@ void LCD_displaySettingUart(char idx){
 	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
 	switch(idx){
 	case 0:{
-		CLCD_I2C_WriteString(&LCD_t, "SEND DATA: ON ");
+		CLCD_I2C_WriteString(&LCD_t, " SEND DATA: ON ");
 		break;
 	}
 	case 1:{
-		CLCD_I2C_WriteString(&LCD_t, "SEND DATA: OFF");
+		CLCD_I2C_WriteString(&LCD_t, " SEND DATA: OFF");
 		break;
 	}
 	}
@@ -213,6 +231,34 @@ void SetCursor(int x, int y){
 	CLCD_I2C_SetCursor(&LCD_t, x, y);
 }
 
+void LCD_DisplayConnectWifi(void){
+	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
+	CLCD_I2C_WriteString(&LCD_t, "ESP Connecting");
+	CLCD_I2C_SetCursor(&LCD_t, 0, 1);
+	CLCD_I2C_WriteString(&LCD_t, "Wifi...");
+}
+
+void LCD_DisplayConnectedWifi(void){
+	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
+	CLCD_I2C_WriteString(&LCD_t, "ESP Connected");
+	CLCD_I2C_SetCursor(&LCD_t, 0, 1);
+	CLCD_I2C_WriteString(&LCD_t, "Wifi...");
+}
+
+void LCD_DisplayConfigServer(void){
+	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
+	CLCD_I2C_WriteString(&LCD_t, "ESP Config Server");
+}
+
+void LCD_DisplayConnectServerBroker(void){
+	CLCD_I2C_SetCursor(&LCD_t, 0, 0);
+	CLCD_I2C_WriteString(&LCD_t, "Connect Server");
+	CLCD_I2C_SetCursor(&LCD_t, 0, 1);
+	CLCD_I2C_WriteString(&LCD_t, "Broker");
+}
+
+
+
 
 
 void ReadPressure(void){
@@ -229,19 +275,9 @@ void ReadLightIntensity(void){
 
 
 void Uart_SendData(void){
-	HAL_GPIO_TogglePin(task2_GPIO_Port, task2_Pin);
 	if(flagUpdateData){
-		sprintf(msg1, "Humidity       : %0.1f\n", DHT20_t.Humidity);
-		sprintf(msg2, "Temperature    : %0.1f\n", DHT20_t.Temperature);
-		sprintf(msg3, "Air Pressure   : %0.1f\n", BMP180_t.Pressure);
-		sprintf(msg4, "Light Intensity: %d\n", BH1750_t.Value);
-
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg5, sizeof(msg5), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg1, sizeof(msg1), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg2, sizeof(msg2), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg3, sizeof(msg3), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg4, sizeof(msg4), 10);
-		HAL_UART_Transmit(&huart1, (uint8_t*)msg6, sizeof(msg6), 10);
+		sprintf(msg, "Humidity:%0.1f;Temperature:%0.1f;AirPressure:%0.1f;LightIntensity:%d\r\n", DHT20_t.Humidity, DHT20_t.Temperature, BMP180_t.Pressure, BH1750_t.Value);
+		HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg), 10);
 	}
 }
 
@@ -258,90 +294,153 @@ void TurnOffCursor(void){
 // AT API
 
 void Connect_AdafruitServer(void){
-//	turnOnBlue();
-
+	int count = 0;
+	LCD_DisplayConnectEsp(0);
+	turnOnBlue();
+	HAL_Delay(1000);
 	while(!ESP_Init(&hEsp)){
-//		turnOnRed();
+		turnOnRed();
 		HAL_Delay(1000);
 		ESP_Init(&hEsp);
 	}
-
-//	turnOnBlue();
+	LCD_Clear();
+	HAL_Delay(3);
+	LCD_DisplayConnectWifi();
 
 	ESP_WifiInit(&hEsp);
-	ESP_WifiMode(&hEsp, ESP_WIFIMODE_STATION, 0);
+	HAL_Delay(100);
+	ESP_WifiMode(&hEsp, ESP_WIFIMODE_STATION, 1);
+	HAL_Delay(100);
+//	if(!ESP_WifiStationIsConnect(&hEsp)){
 	while(!ESP_WifiStationConnect(&hEsp, pSSID, PassWord, NULL, 10000)){
-//		turnOnRed();
-		HAL_Delay(1000);
+		turnOnRed();
+		HAL_Delay(5000);
 		ESP_WifiStationConnect(&hEsp, pSSID, PassWord, NULL, 10000);
 	}
-
-//	turnOnBlue();
-
+	LCD_Clear();
+	HAL_Delay(1);
+	LCD_DisplayConnectedWifi();
+//	}
+	turnOnBlue();
+	HAL_Delay(1000);
+	LCD_Clear();
+	HAL_Delay(1);
+	LCD_DisplayConfigServer();
 	while(!ESP_MQTTConfig(&hEsp, UserID, Key)){
-//		turnOnRed();
-		HAL_Delay(3000);
+		turnOnRed();
+		if(count == 2) ResetESP32();
+		HAL_Delay(5000);
 		ESP_MQTTConfig(&hEsp, UserID, Key);
+		count++;
 	}
-
-//	turnOnBlue();
+	count = 0;
+	turnOnBlue();
+	HAL_Delay(5000);
+	LCD_Clear();
+	HAL_Delay(1);
+	LCD_DisplayConnectServerBroker();
 
 	while(!ESP_MQTTConnect(&hEsp, Server, Port)){
-//		turnOnRed();
-		HAL_Delay(5000);
+		if(count == 2) ResetESP32();
+		turnOnRed();
+		HAL_Delay(10000);
 		ESP_MQTTConnect(&hEsp, Server, Port);
+		count++;
 	}
+	turnOnBlue();
+	HAL_Delay(5000);
 
 	flagConnect = true;
-
-//	turnOnGreen();
-
+	flagConfig = true;
+	turnOnGreen();
+	LCD_DisplayConnectEsp(1);
+	HAL_Delay(1000);
+	LCD_Clear();
 }
 
-void Publish_Temperature_Task(void){
+unsigned char Publish_Temperature_Task(void){
 	if(flagConnect){
 		sprintf(TemperatureStr, "%0.1f", DHT20_t.Temperature);
-		ESP_MQTTPublish(&hEsp, TemperatureFeed, TemperatureStr);
+		return ESP_MQTTPublish(&hEsp, TemperatureFeed, TemperatureStr);
 	}
+	return 0;
 }
 
-void Publish_Humidity_Task(void){
+unsigned char Publish_Humidity_Task(void){
 	if(flagConnect){
 		sprintf(HumidityStr, "%0.1f", DHT20_t.Humidity);
-		ESP_MQTTPublish(&hEsp, HumidityFeed, HumidityStr);
+		return ESP_MQTTPublish(&hEsp, HumidityFeed, HumidityStr);
 	}
-
-
+	return 0;
 }
 
-void Publish_LightIntensity_Task(void){
+unsigned char Publish_LightIntensity_Task(void){
 	if(flagConnect){
 		sprintf(LightIntensityStr, "%d", BH1750_t.Value);
-		ESP_MQTTPublish(&hEsp, LightIntensityFeed, LightIntensityStr);
+		return ESP_MQTTPublish(&hEsp, LightIntensityFeed, LightIntensityStr);
 	}
-
+	return 0;
 }
 
-void Publish_AirPressure_Task(void){
+unsigned char Publish_AirPressure_Task(void){
 	if(flagConnect){
 		sprintf(AirPressureStr, "%0.1f", BMP180_t.Pressure);
-		ESP_MQTTPublish(&hEsp, AirPressureFeed, AirPressureStr);
+		return ESP_MQTTPublish(&hEsp, AirPressureFeed, AirPressureStr);
 	}
+	return 0;
 }
 
 void Publish_Task(void){
-	Publish_AirPressure_Task();
-//	Publish_Humidity_Task();
-//	Publish_AirPressure_Task();
-//	Publish_LightIntensity_Task();
+	switch(flagConnect){
+	case 1:{
+		do{
+			if(!Publish_AirPressure_Task()){
+				break;
+			}
+			if(!Publish_Humidity_Task()){
+				break;
+			}
+			if(!Publish_Temperature_Task()){
+				break;
+			}
+			if(!Publish_LightIntensity_Task()){
+				break;
+			}
 
-	SCH_Add_Task(Publish_Humidity_Task, 0, 5);
-	SCH_Add_Task(Publish_AirPressure_Task, 0, 10);
-	SCH_Add_Task(Publish_LightIntensity_Task, 0, 15);
+			return;
+		}
+		while(0);
+		flagConnect = 0;
+		return;
+	}
+	case 0:{
+		SCH_Add_Task(ResetESP32, 0, 0);
+		SCH_Add_Task(Reconncet_Server, 0, 400);
+		SCH_Add_Task(Reconnect_MQTTBroker, 0, 1000);
+	}
+	}
+
+	flagConnect = false;
 }
 
 void Check_ServerConnect_Task(void){
-	return; // for dummy
+	if(!flagConnect){
+
+	}
 }
 
+void Reconncet_Server(void){
+	if(ESP_MQTTConfig(&hEsp, UserID, Key)){
+		flagConfig = true;
+	}
+}
+void Reconnect_MQTTBroker(void){
+	if(ESP_MQTTConnect(&hEsp, Server, Port)){
+		flagConnect = true;
+	}
+}
+
+void ResetESP32(void){
+	ESP_Restart(&hEsp);
+}
 

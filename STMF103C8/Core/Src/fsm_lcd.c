@@ -26,11 +26,13 @@ void init_System(void){
 void fsm_readSensor(void){
 	flagReceivedData = 1;
 	// read pressure data
+	SendRequestDHT20();
+	SCH_Add_Task(ReadDHT20, 0, 10);
 	ReadPressure();
 
 	// read light intensity data
-//	SendRequestForLTdata();
-//	SCH_Add_Task(ReadLightIntensity, 0, 18);
+	SendRequestForLTdata();
+	SCH_Add_Task(ReadLightIntensity, 0, 18);
 
 }
 
@@ -48,11 +50,11 @@ void settingUart_handler(void){
 	}
 	case ACTIVATE:{
 		flagUpdateData = 1;
-		if(is_button_press(1)){
-			tempState2 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState2 && !is_button_press(1)){
-			tempState2 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			mobj.activate_substate.uartState = INACTIVATE_ENTRY;
 		}
 		break;
@@ -65,11 +67,11 @@ void settingUart_handler(void){
 	}
 	case INACTIVATE:{
 		flagUpdateData = 0;
-		if(is_button_press(1)){
-			tempState2 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState2 && !is_button_press(1)){
-			tempState2 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			mobj.activate_substate.uartState = ACTIVATE_ENTRY;
 		}
 		break;
@@ -87,22 +89,22 @@ void settingUnit_handler(void){
 		break;
 	}
 	case SETTING_TEMP:{
-		if(is_button_press(1)){
-			tempState2 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState2 && !is_button_press(1)){
-			tempState2 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			unitDisplay_temperature = (unitDisplay_temperature + 1) % 2;
 			LCD_displaySettingTemp(unitDisplay_temperature);
 			break;
 		}
 
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
 			SetCursor(0, 0);
 			LCD_putChar(' ');
 			SetCursor(0, 1);
@@ -113,21 +115,21 @@ void settingUnit_handler(void){
 		break;
 	}
 	case SETTING_PRESS:{
-		if(is_button_press(1)){
-			tempState2 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState2 && !is_button_press(1)){
-			tempState2 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			unitDisplay_pressure = (unitDisplay_pressure + 1) % 2;
 			LCD_displaySettingPress(unitDisplay_pressure);
 			break;
 		}
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
 			SetCursor(0, 1);
 			LCD_putChar(' ');
 			mobj.activate_substate.unitState = INIT_UNIT;
@@ -149,11 +151,11 @@ void settingMode_handler(void){
 		break;
 	}
 	case SETTING_UART:{
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			if(mobj.activate_substate.uartState == ACTIVATE){
 				mobj.activate_substate.uartState = ACTIVATE_ENTRY;
 			}
@@ -180,7 +182,7 @@ void settingMode_handler(void){
 	}
 	case UART_PROCESS:{
 		settingUart_handler();
-		if(is_button_press1s(0)){
+		if(is_button_press1s(2)){
 			mobj.activate_substate.settingState = INIT;
 		}
 		break;
@@ -195,11 +197,11 @@ void settingMode_handler(void){
 			break;
 		}
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(0)){
+			tempState1 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			LCD_Clear();
 			LCD_displaySettingUnit();
 			mobj.activate_substate.unitState = INIT_UNIT;
@@ -210,7 +212,7 @@ void settingMode_handler(void){
 	case UNIT_PROCESS:{
 		settingUnit_handler();
 
-		if(is_button_press1s(0)){
+		if(is_button_press1s(2)){
 			LCD_Clear();
 			mobj.activate_substate.settingState = INIT;
 		}
@@ -220,7 +222,6 @@ void settingMode_handler(void){
 }
 
 void WeatherStation(void){
-//	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
 	switch(mobj.activate_state){
 	case IDLE:{
 		LCD_DisplayPage1();
@@ -228,7 +229,11 @@ void WeatherStation(void){
 		break;
 	}
 	case HOME:{
-		if(is_button_press1s(0)){
+		if(is_button_press(0)){
+			tempState1 = 1;
+		}
+		if(tempState1 && !is_button_press(0)){
+			tempState1 = 0;
 			LCD_Clear();
 			mobj.activate_state = SETTING;
 			mobj.activate_substate.settingState = INIT;
@@ -236,11 +241,11 @@ void WeatherStation(void){
 			break;
 		}
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
 			LCD_Clear();
 			LCD_DisplayPage2(unitDisplay_temperature);
 			mobj.activate_state = PAGE1;
@@ -254,11 +259,11 @@ void WeatherStation(void){
 		}
 
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
 			LCD_Clear();
 			LCD_DisplayPage3(unitDisplay_pressure);
 			mobj.activate_state = PAGE2;
@@ -272,11 +277,11 @@ void WeatherStation(void){
 			flagReceivedData = 0;
 		}
 
-		if(is_button_press(2)){
-			tempState3 = 1;
+		if(is_button_press(1)){
+			tempState2 = 1;
 		}
-		if(tempState3 && !is_button_press(2)){
-			tempState3 = 0;
+		if(tempState2 && !is_button_press(1)){
+			tempState2 = 0;
 			LCD_Clear();
 			mobj.activate_state = IDLE;
 		}
@@ -285,7 +290,7 @@ void WeatherStation(void){
 	case SETTING:{
 		settingMode_handler();
 
-		if(is_button_press1s(1)){
+		if(is_button_press1s(2)){
 			LCD_Clear();
 			mobj.activate_substate.settingState = INIT;
 			mobj.activate_state = IDLE;

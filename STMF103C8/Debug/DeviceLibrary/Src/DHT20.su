@@ -2,3 +2,5 @@
 ../DeviceLibrary/Src/DHT20.c:17:15:DHT20_CheckCRC8	40	static
 ../DeviceLibrary/Src/DHT20.c:32:9:DHT20_ReadRegister	40	static
 ../DeviceLibrary/Src/DHT20.c:45:22:DHT20_ReceiveData	48	static
+../DeviceLibrary/Src/DHT20.c:104:22:DHT20_SendRequest	40	static
+../DeviceLibrary/Src/DHT20.c:126:22:DHT20_ReadData	40	static
