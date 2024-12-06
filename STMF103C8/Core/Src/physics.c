@@ -16,10 +16,10 @@ BH1750_Typedef BH1750_t;
 DHT20_Typedef DHT20_t;
 unsigned char flagUpdateData = 0;
 
-const char* LightIntensityFeed = "TrungNam/feeds/lightintensity";
-const char* TemperatureFeed = "TrungNam/feeds/temperature";
-const char* AirPressureFeed = "TrungNam/feeds/airpressure";
-const char* HumidityFeed = "TrungNam/feeds/humidity";
+const char* LightIntensityFeed = "";
+const char* TemperatureFeed = "";
+const char* AirPressureFeed = "";
+const char* HumidityFeed = "";
 
 char LightIntensityStr[10];
 char HumidityStr[10];
