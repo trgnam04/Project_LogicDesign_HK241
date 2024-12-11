@@ -1,6 +1,6 @@
 ../Core/Src/fsm_lcd.c:17:6:init_System	8	static
 ../Core/Src/fsm_lcd.c:26:6:fsm_readSensor	8	static
-../Core/Src/fsm_lcd.c:39:6:settingUart_handler	8	static
-../Core/Src/fsm_lcd.c:82:6:settingUnit_handler	8	static
-../Core/Src/fsm_lcd.c:142:6:settingMode_handler	8	static
-../Core/Src/fsm_lcd.c:224:6:WeatherStation	8	static
+../Core/Src/fsm_lcd.c:40:6:settingUart_handler	8	static
+../Core/Src/fsm_lcd.c:83:6:settingUnit_handler	8	static
+../Core/Src/fsm_lcd.c:143:6:settingMode_handler	8	static
+../Core/Src/fsm_lcd.c:225:6:WeatherStation	8	static

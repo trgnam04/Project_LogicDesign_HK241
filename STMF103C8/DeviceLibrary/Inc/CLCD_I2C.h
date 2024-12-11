@@ -3,10 +3,6 @@
 
 #include "stm32f1xx_hal.h"
 
-
-
-
-
 #define CLCD_COMMAND 	0x00
 #define CLCD_DATA 		0x01
 
@@ -78,11 +74,8 @@ void CLCD_I2C_WriteChar(CLCD_I2C_Name* LCD, char character);
 void CLCD_I2C_WriteString(CLCD_I2C_Name* LCD, char *String);
 
 void CLCD_I2C_Clear(CLCD_I2C_Name* LCD);
-void CLCD_I2C_ReturnHome(CLCD_I2C_Name* LCD);
 void CLCD_I2C_CursorOn(CLCD_I2C_Name* LCD);
 void CLCD_I2C_CursorOff(CLCD_I2C_Name* LCD);
 void CLCD_I2C_BlinkOn(CLCD_I2C_Name* LCD);
 void CLCD_I2C_BlinkOff(CLCD_I2C_Name* LCD);
-void I2C_LCD_setCursor(uint8_t col, uint8_t row);
-void I2C_LCD_SendString(char *str);
 #endif

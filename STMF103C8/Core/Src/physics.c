@@ -16,21 +16,21 @@ BH1750_Typedef BH1750_t;
 DHT20_Typedef DHT20_t;
 unsigned char flagUpdateData = 0;
 
-const char* LightIntensityFeed = "";
-const char* TemperatureFeed = "";
-const char* AirPressureFeed = "";
-const char* HumidityFeed = "";
+const char* LightIntensityFeed = "TrungNam/feeds/lightintensity";
+const char* TemperatureFeed = "TrungNam/feeds/temperature";
+const char* AirPressureFeed = "TrungNam/feeds/airpressure";
+const char* HumidityFeed = "TrungNam/feeds/humidity";
 
 char LightIntensityStr[10];
 char HumidityStr[10];
 char TemperatureStr[10];
 char AirPressureStr[10];
 
-const char* pSSID = "271104E";
-const char* PassWord = "1234567890";
+const char* pSSID = "ACLAB";
+const char* PassWord = "ACLAB2023";
 const char* UserID = "TrungNam";
-const char* Key = "";
-const char* Server = "";
+const char* Key = "aio_eBzS77zwBoTjTTf3D4nFKLlsTI7l";
+const char* Server = "io.adafruit.com";
 const uint16_t Port = 1883;
 
 static unsigned char flagConnect =  false;
@@ -303,24 +303,26 @@ void Connect_AdafruitServer(void){
 	HAL_Delay(100);
 	ESP_WifiMode(&hEsp, ESP_WIFIMODE_STATION, 1);
 	HAL_Delay(100);
-//	if(!ESP_WifiStationIsConnect(&hEsp)){
 	while(!ESP_WifiStationConnect(&hEsp, pSSID, PassWord, NULL, 10000)){
 		turnOnRed();
 		HAL_Delay(5000);
+		if(count == 4) break;
+		count++;
 		ESP_WifiStationConnect(&hEsp, pSSID, PassWord, NULL, 10000);
 	}
+	count = 0;
 	LCD_Clear();
-	HAL_Delay(1);
+	HAL_Delay(4);
 	LCD_DisplayConnectedWifi();
-//	}
 	turnOnBlue();
 	HAL_Delay(1000);
 	LCD_Clear();
-	HAL_Delay(1);
+	HAL_Delay(4);
 	LCD_DisplayConfigServer();
 	while(!ESP_MQTTConfig(&hEsp, UserID, Key)){
-		turnOnRed();
 		if(count == 2) ResetESP32();
+		if(count == 4) break;
+		turnOnRed();
 		HAL_Delay(5000);
 		ESP_MQTTConfig(&hEsp, UserID, Key);
 		count++;
@@ -329,11 +331,12 @@ void Connect_AdafruitServer(void){
 	turnOnBlue();
 	HAL_Delay(5000);
 	LCD_Clear();
-	HAL_Delay(1);
+	HAL_Delay(4);
 	LCD_DisplayConnectServerBroker();
 
 	while(!ESP_MQTTConnect(&hEsp, Server, Port)){
 		if(count == 2) ResetESP32();
+		if(count == 4) break;
 		turnOnRed();
 		HAL_Delay(10000);
 		ESP_MQTTConnect(&hEsp, Server, Port);
@@ -348,6 +351,7 @@ void Connect_AdafruitServer(void){
 	LCD_DisplayConnectEsp(1);
 	HAL_Delay(1000);
 	LCD_Clear();
+	HAL_Delay(4);
 }
 
 unsigned char Publish_Temperature_Task(void){

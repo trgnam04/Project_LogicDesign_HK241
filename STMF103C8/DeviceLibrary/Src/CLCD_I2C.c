@@ -3,11 +3,12 @@
 ******************************************************************************************************************/
 #include "CLCD_I2C.h"
 
-//************************** Low Level Function ****************************************************************//
-static void CLCD_Delay(uint16_t Time)
-{
-	HAL_Delay(Time);
+void CLCD_Delay(int ms){
+	HAL_Delay(ms);
 }
+
+
+//************************** Low Level Function ****************************************************************//
 static void CLCD_WriteI2C(CLCD_I2C_Name* LCD, uint8_t Data, uint8_t Mode)
 {
 	char Data_H;
@@ -110,11 +111,6 @@ void CLCD_I2C_WriteString(CLCD_I2C_Name* LCD, char *String)
 void CLCD_I2C_Clear(CLCD_I2C_Name* LCD)
 {
 	CLCD_WriteI2C(LCD, LCD_CLEARDISPLAY, CLCD_COMMAND);
-}
-void CLCD_I2C_ReturnHome(CLCD_I2C_Name* LCD)
-{
-	CLCD_WriteI2C(LCD, LCD_RETURNHOME, CLCD_COMMAND);
-	CLCD_Delay(5);
 }
 void CLCD_I2C_CursorOn(CLCD_I2C_Name* LCD)
 {

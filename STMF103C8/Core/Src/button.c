@@ -30,7 +30,6 @@ void init_button(void){
 }
 
 void button_reading(void){
-	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
 	for(int i = 0; i < NO_OF_BUTTON; i++){
 		debounceButton3[i] = debounceButton2[i];
 		debounceButton2[i] = debounceButton1[i];

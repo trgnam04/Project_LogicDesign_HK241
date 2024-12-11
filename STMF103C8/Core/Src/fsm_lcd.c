@@ -27,7 +27,8 @@ void fsm_readSensor(void){
 	flagReceivedData = 1;
 	// read pressure data
 	SendRequestDHT20();
-	SCH_Add_Task(ReadDHT20, 0, 10);
+	SCH_Add_Task(ReadDHT20, 0, 12);
+
 	ReadPressure();
 
 	// read light intensity data

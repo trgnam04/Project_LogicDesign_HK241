@@ -60,6 +60,9 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void task1(void){
+	HAL_GPIO_TogglePin(task1_GPIO_Port, task1_Pin);
+}
 /* USER CODE END 0 */
 
 /**
@@ -101,10 +104,10 @@ int main(void)
   init_System();
   Connect_AdafruitServer();
   SCH_Init();
+  SCH_Add_Task(task1, 1, 0);
   SCH_Add_Task(button_reading, 1, 0);
   SCH_Add_Task(WeatherStation, 1, 0);
   SCH_Add_Task(fsm_readSensor, 100, 0);
-  SCH_Add_Task(Check_ServerConnect_Task, 500, 0);
   SCH_Add_Task(Uart_SendData, 300, 0);
   SCH_Add_Task(Publish_Task, 2000, 10);
   HAL_TIM_Base_Start_IT(&htim2);
